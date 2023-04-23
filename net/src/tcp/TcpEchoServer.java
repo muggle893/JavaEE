@@ -11,6 +11,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author:txf
@@ -25,11 +28,16 @@ public class TcpEchoServer {
 
     public void start() throws IOException{
         System.out.println("服务器启动~");
+        ExecutorService pool = Executors.newCachedThreadPool();
         while (true) {
             //接受用户的请求
             Socket socket = serverSocket.accept();
-            //处理用户的请求
-            processConnection(socket);
+            pool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    processConnection(socket);
+                }
+            });
         }
     }
 
